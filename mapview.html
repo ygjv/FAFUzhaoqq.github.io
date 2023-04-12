@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <title>
+      Intro to MapView - Create a 2D map | Sample | ArcGIS Maps SDK for
+      JavaScript 4.26
+    </title>
+    <style>
+      html,
+      body,
+      #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+      
+      #header {
+      height: 50px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      line-height: 50px;
+    }
+    </style>
+
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.26/esri/themes/light/main.css"
+    />
+    <script src="https://js.arcgis.com/4.26/"></script>
+
+    <script>
+      require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/layers/FeatureLayer",
+        "esri/layers/TileLayer",
+        "esri/widgets/Legend",
+        "esri/widgets/ScaleBar",
+        "esri/widgets/LayerList",
+        "esri/widgets/Search",
+        "esri/widgets/BasemapGallery",
+        "esri/widgets/DistanceMeasurement2D",
+        "esri/widgets/Compass"
+      ],(
+        Map,
+        MapView,
+        FeatureLayer,
+        TileLayer,
+        Legend,
+        ScaleBar,
+        LayerList,
+        Search,
+        BasemapGallery,
+        DistanceMeasurement2D,
+        Compass
+      ) => {
+        const flayer = new FeatureLayer({
+          url: "https://www.geosceneonline.cn/server/rest/services/Hosted/%E7%A6%8F%E5%BB%BA%E5%86%9C%E6%9E%97%E5%A4%A7%E5%AD%A6%E5%85%AC%E5%85%B1%E4%BA%8B%E4%BB%B6%E8%A6%81%E7%B4%A0%E5%9B%BE%E5%B1%82/FeatureServer"
+        });
+        const tiledlayer = new TileLayer({
+          url: "https://tiles.arcgis.com/tiles/nzS0F0zdNLvs7nc8/arcgis/rest/services/China_PopDens_2020/MapServer"
+        });
+
+        const map = new Map({
+          basemap: "topo",
+          layers: [tiledlayer]
+        });
+        map.layers.add(flayer);
+
+        const view = new MapView({
+          container: "viewDiv",
+          map: map,
+          zoom: 4,
+          center: [105, 34] // longitude, latitude
+        });
+
+        const legend = new Legend({
+          view: view,
+          layerInfos: [
+            {
+              layer: flayer,
+              title: "事件类型"
+            }
+          ]
+        });
+        view.ui.add(legend, "bottom-right");
+
+        const scaleBar = new ScaleBar({
+          view: view,
+          style: "ruler",
+          unit: "metric"
+        });
+          view.ui.add(scaleBar, {
+          position: "bottom-left"
+        });
+
+        const layerList = new LayerList({
+          view: view
+        });
+        
+          view.ui.add(layerList, {
+          position: "top-right"
+        });
+
+        const searchWidget = new Search({ view: view });
+          view.ui.add(searchWidget, {
+          position: "top-left",
+          index: 2
+        });
+        
+        const basemapGallery = new BasemapGallery({
+          view: view,
+          container: basemapDiv
+          });
+        view.ui.add(basemapGallery, {
+          position: "mid-right"
+          });
+        
+        let measurementWidget = new DistanceMeasurement2D({
+          view: view
+          });
+        view.ui.add(measurementWidget, "top-left");
+        
+        let compass = new Compass({
+          view: view
+          });
+        view.ui.add(compass, "bottom-left");
+        
+      });
+    </script>
+  </head>
+
+  <body>
+    <div id="basemapDiv"></div>
+    <div id="header">中国人口变化</div>
+    <div id="viewDiv"></div>
+  </body>
+</html>
